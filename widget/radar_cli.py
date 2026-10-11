@@ -191,11 +191,10 @@ def doctor():
     def has(cmd): return shutil.which(cmd) is not None
     print(f'AI Radar — doctor   (widget folder: {W})\n')
     ub = os.path.exists('/Applications/Übersicht.app')
-    run = subprocess.run(['pgrep', '-f', 'Übersicht.app/Contents/MacOS'], capture_output=True).returncode == 0
     srv = False
     try: import urllib.request; srv = urllib.request.urlopen(f'http://127.0.0.1:{PORT}/', timeout=3).status == 200
     except Exception: pass
-    print(f'{ok(ub)} Übersicht installed      {ok(run)} running      {ok(srv)} server on :{PORT}')
+    print(f'{ok(ub)} Übersicht installed      {ok(srv)} running (its server answers on :{PORT})')
     for f in ('feed.jsx', 'quick.jsx', 'strip.jsx', 'engine.py', 'radar.html'): print(f'{ok(os.path.exists(os.path.join(W, f)))} {f}', end='   ')
     print()
     fd = feed(); age = None
