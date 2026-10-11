@@ -16,8 +16,8 @@ jobs:
       - name: Shell scripts
         run: |
           sudo apt-get install -y shellcheck >/dev/null
-          bash -n install.sh uninstall.sh widget/system.sh
-          shellcheck -S warning install.sh uninstall.sh
+          bash -n install.sh uninstall.sh widget/system.sh demo/build.sh
+          shellcheck -S warning install.sh uninstall.sh demo/build.sh
       - name: Widget JSX parses
         run: |
           npm i --no-save esbuild >/dev/null

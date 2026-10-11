@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><title>demo stage</title><style>
+html,body{margin:0;height:100%;overflow:hidden;font-family:-apple-system,"SF Pro Display",sans-serif}
+/* neutral abstract wallpaper (no third-party imagery) */
+body{background:
+  radial-gradient(60% 50% at 18% 12%,rgba(255,170,120,.55),transparent 62%),
+  radial-gradient(55% 55% at 85% 20%,rgba(120,150,255,.55),transparent 60%),
+  radial-gradient(70% 60% at 60% 95%,rgba(190,120,255,.50),transparent 62%),
+  linear-gradient(160deg,#6f86d9,#a483d3 48%,#e29b8c)}
+#bar{position:absolute;left:0;right:0;top:0;height:30px;background:rgba(255,255,255,.28);backdrop-filter:blur(14px);z-index:0}
+#bar b{position:absolute;left:18px;top:6px;font-size:13px;color:#10131a;font-weight:700}#bar i{position:absolute;right:18px;top:7px;font-size:12px;font-style:normal;color:#10131a}
+#widgets{position:absolute;inset:30px 0 0 0}
+/* demo overlays */
+#cur{position:absolute;z-index:99;left:0;top:0;width:22px;height:22px;pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));transition:none}
+#hud{position:absolute;z-index:90;left:50%;bottom:78px;transform:translateX(-50%);width:660px;opacity:0;pointer-events:none;filter:drop-shadow(0 12px 28px rgba(0,0,0,.45))}
+#key{position:absolute;z-index:91;left:50%;bottom:210px;transform:translateX(-50%) scale(.9);opacity:0;padding:10px 18px;border-radius:14px;background:rgba(255,255,255,.92);color:#10131a;font-weight:800;font-size:19px;box-shadow:0 8px 24px rgba(0,0,0,.35);letter-spacing:.02em;white-space:nowrap}
+#cap{position:absolute;z-index:92;left:50%;bottom:26px;transform:translateX(-50%);padding:9px 20px;border-radius:999px;background:rgba(13,17,23,.88);color:#f3f5f9;font-weight:700;font-size:16px;opacity:0;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12)}
+#end{position:absolute;inset:0;z-index:100;background:radial-gradient(70% 70% at 50% 40%,#241a4a,#0b0e13);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0;color:#f3f5f9}
+#end h1{margin:0;font-size:76px;letter-spacing:-.03em;font-weight:800}#end h1 em{font-style:normal;background:linear-gradient(90deg,#c9b8ff,#f9d4ff);-webkit-background-clip:text;color:transparent}
+#end p{margin:0;font-size:24px;color:#a8b3cf;font-weight:600}#end code{font-size:22px;color:#c4b5fd;background:rgba(255,255,255,.07);padding:10px 18px;border-radius:12px;font-family:ui-monospace,Menlo,monospace}
+</style></head><body>
+<div id="bar"><b>  AI Radar demo</b><i>Sun 11 Oct</i></div>
+<div id="widgets"></div>
+<svg id="cur" viewBox="0 0 22 22" style="display:none"><path d="M3 2l14 8-6.2 1.6L8.6 18z" fill="#fff" stroke="#10131a" stroke-width="1.4" stroke-linejoin="round"/></svg>
+<img id="hud" alt="">
+<div id="key">⌥ Space</div>
+<div id="cap"></div>
+<div id="end"><h1>AI <em>Radar</em></h1><p>A macOS desktop widget for AI news, agent repos &amp; launches</p><code>github.com/7hrn1/macos-ai-radar-widget</code></div>
+<script src="out/harness.js" type="module"></script>
+</body></html>

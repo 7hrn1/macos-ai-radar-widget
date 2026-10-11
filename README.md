@@ -2,6 +2,9 @@
 
 **A glanceable, voice-controllable AI radar for your Mac desktop.** New agent repos, model releases, product launches and creator tools slide across your wallpaper — ranked by *your* interests, with images, summaries and one-click access to your daily apps. Local-first, no accounts, no API keys required.
 
+![AI Radar demo: sliding cards, shortcuts, voice control and the full page](docs/demo.gif)
+<sub>30-second demo, rendered from the real widgets with live data — see [`demo/`](demo/) to rebuild it.</sub>
+
 ![AI Radar widget on a 1920×1080 macOS desktop](docs/screenshot.png)
 <sub>Screenshot uses live data and the example app shortcuts.</sub>
 

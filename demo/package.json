@@ -1,0 +1,8 @@
+{
+  "name": "ai-radar-demo-renderer",
+  "private": true,
+  "description": "Renders docs/demo.gif from the real widgets (headless Chrome, scripted + deterministic). Dev tool only.",
+  "type": "module",
+  "scripts": { "build": "./build.sh" },
+  "devDependencies": { "@emotion/css": "^11.13.0", "esbuild": "^0.25.0", "playwright-core": "^1.49.0", "react": "^18.3.1", "react-dom": "^18.3.1" }
+}

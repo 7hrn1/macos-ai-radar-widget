@@ -11,3 +11,8 @@ __pycache__/
 .DS_Store
 node_modules/
 /dist/
+
+# demo renderer scratch
+demo/node_modules/
+demo/.work/
+demo/widgets/

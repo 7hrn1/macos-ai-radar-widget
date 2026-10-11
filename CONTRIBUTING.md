@@ -10,3 +10,4 @@ python3 -m unittest discover -s tests -v     # all tests, no network needed
 - UI sizes use the `calc(N * var(--u))` scale unit so the layout scales with screen width — don't hard-code px (except 1px borders).
 - New sources: add a `lane_*` function returning items (`t,u,s,d,b,c,st,raw_img`), register it in `build()`, and a test for any parsing.
 - Widget boxes are absolutely positioned and can overlap other widgets' areas. Give any large container `pointer-events: none` and re-enable it only on the parts that are interactive, or it will swallow clicks meant for widgets underneath.
+- Changed the UI? Re-render the demo with `demo/build.sh` (see `demo/README.md`) — but only commit the new GIF for visible changes, it is several MB.
