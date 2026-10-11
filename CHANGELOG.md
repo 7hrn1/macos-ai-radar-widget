@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.3
+- Shortcut icons: smoother, cleaner hover — lift + a thin app-tinted ring and soft shadow (animated with box-shadow/transform only; the stacked glow filters flashed and re-rendered every frame)
+
 ## 0.1.2
 - Fix: the app-shortcut icons could be unclickable — the feed widget's (empty) header area covered them and swallowed the clicks. The feed container is now click-through, the shortcuts sit on a higher layer, and the display-only markets strip never blocks clicks.
 
