@@ -17,6 +17,8 @@ export const className = `
   color: #f3f5f9; font-family: -apple-system, "SF Pro Display", "Inter", sans-serif; -webkit-font-smoothing: antialiased;
   --bg: rgba(13,17,23,.94); --line: #2a303b; --mut: #8b95ab; --soft: #a8b3cf; --pur2: #a78bfa;
   * { box-sizing: border-box; }
+  pointer-events: none;                       /* this box covers other widgets' area (e.g. the shortcut icons) — only its own cards/chips take clicks */
+  .card, .chips { pointer-events: auto; }
   @media (prefers-reduced-motion: reduce) { .track, .dot { animation: none !important; } }
   .hd { display: flex; align-items: center; justify-content: space-between; padding: 0 calc(4 * var(--u)) 0 calc(322 * var(--u)); }
   .hd h1 { margin: 0; font-size: calc(30 * var(--u)); font-weight: 800; letter-spacing: -.02em; line-height: 1; filter: drop-shadow(0 calc(1 * var(--u)) calc(3 * var(--u)) rgba(0,0,0,.45)); }

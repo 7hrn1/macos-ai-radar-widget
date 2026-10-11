@@ -8,6 +8,7 @@ export const className = `
   --u: clamp(0.9px, calc(0.0425vw + 0.386px), 1.3px);
   left: 28px; top: 18px; width: calc(300 * var(--u)); height: calc(62 * var(--u)); display: grid; grid-template-columns: repeat(5, 1fr); gap: calc(10 * var(--u)); align-content: center;
   @media (min-width: 1600px) { left: 4vw; }
+  z-index: 20;                                /* always above the feed widget so the icons stay clickable */
   * { box-sizing: border-box; }
   .tile { aspect-ratio: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .14s, filter .14s; filter: drop-shadow(0 calc(4 * var(--u)) calc(9 * var(--u)) rgba(0,0,0,.42)); }
   .tile:hover { transform: translateY(-3px) scale(1.06); filter: drop-shadow(0 calc(9 * var(--u)) calc(14 * var(--u)) rgba(0,0,0,.5)) drop-shadow(0 0 calc(7 * var(--u)) var(--c)); }

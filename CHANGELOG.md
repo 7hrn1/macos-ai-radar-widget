@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.2
+- Fix: the app-shortcut icons could be unclickable — the feed widget's (empty) header area covered them and swallowed the clicks. The feed container is now click-through, the shortcuts sit on a higher layer, and the display-only markets strip never blocks clicks.
+
 ## 0.1.1
 - Opening "See all" now adds a version stamp so a stale open tab can never show an old layout
 - "See all" page: every card now has the same height (fixed image area, title, fading text, one-line tags, pinned footer) for a balanced grid

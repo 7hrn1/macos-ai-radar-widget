@@ -9,6 +9,7 @@ export const className = `
   color: #f3f5f9; font-family: -apple-system, "SF Pro Display", "Inter", sans-serif; -webkit-font-smoothing: antialiased;
   --bg: rgba(13,17,23,.94); --line: #2a303b; --mut: #8b95ab; --soft: #a8b3cf;
   * { box-sizing: border-box; }
+  pointer-events: none;                       /* display-only: never block clicks on widgets underneath */
   .tk, .sysc { background: var(--bg); border: 1px solid var(--line); border-radius: calc(15 * var(--u)); box-shadow: 0 calc(10 * var(--u)) calc(28 * var(--u)) rgba(0,0,0,.5), 0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.07); }
   .tk { flex: 1 1 0; min-width: 0; padding: 0 calc(12 * var(--u)); display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr 1fr; align-items: center; column-gap: calc(8 * var(--u)); }
   .s { font-size: calc(12 * var(--u)); font-weight: 800; letter-spacing: .02em; align-self: end; }
