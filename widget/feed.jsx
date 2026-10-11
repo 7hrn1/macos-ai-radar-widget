@@ -68,7 +68,7 @@ const sh = (s) => "'" + String(s).replace(/'/g, "'\\''") + "'";
 const safeUrl = (u) => { try { const x = new URL(u); return x.protocol === 'http:' || x.protocol === 'https:' ? x.href : null; } catch (e) { return null; } };
 const openUrl = (u) => { const s = safeUrl(u); if (s) run('/usr/bin/open ' + sh(s)); };
 const save = (it) => run(sh(PY) + ' ' + sh(DIR + '/save.py') + ' ' + sh(enc(it)));
-const seeAll = (lane) => run('/usr/bin/open ' + sh('http://127.0.0.1:41416/__WIDGET__/radar.html' + (lane && /^[a-z]+$/.test(lane) ? '?lane=' + lane : '')));
+const seeAll = (lane) => run('/usr/bin/open ' + sh('http://127.0.0.1:41416/__WIDGET__/radar.html?v=' + Date.now() + (lane && /^[a-z]+$/.test(lane) ? '&lane=' + lane : '')));   // ?v= defeats a stale cached copy
 const ago = (iso) => { if (!iso) return ''; const h = Math.max(0, Math.round((Date.now() - new Date(iso)) / 36e5)); return h < 1 ? 'just now' : h < 24 ? h + 'h ago' : Math.round(h / 24) + 'd ago'; };
 const keyframes = () => {
   let o = '';

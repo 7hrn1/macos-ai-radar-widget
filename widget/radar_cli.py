@@ -55,7 +55,7 @@ def open_app(a, profile):
     cmd = [CHROME, f'--profile-directory={profile}', a['url']] if os.path.exists(CHROME) else ['open', a['url']]
     subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 def page(lane='', q=''):
-    qs = {k: v for k, v in (('lane', lane), ('q', q)) if v}
+    qs = {k: v for k, v in (('v', int(time.time())), ('lane', lane), ('q', q)) if v}
     return f'http://127.0.0.1:{PORT}/{WIDGET}/radar.html' + ('?' + urllib.parse.urlencode(qs) if qs else '')
 def refresh_bg():
     if os.environ.get('RADAR_NO_REFRESH'): return

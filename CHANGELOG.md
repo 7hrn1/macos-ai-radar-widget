@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.1
+- Opening "See all" now adds a version stamp so a stale open tab can never show an old layout
 - "See all" page: every card now has the same height (fixed image area, title, fading text, one-line tags, pinned footer) for a balanced grid
 - `radar doctor` no longer reports a running Übersicht as stopped
 
