@@ -82,7 +82,7 @@ Everything lives in `~/Library/Application Support/Übersicht/widgets/ai-radar/`
  (RSS, GitHub, HN,        score by prefs,                    radar.html (full page)
   Hugging Face, PH)       cache images locally               radar CLI  ◄── ⌥ Space ◄── Hammerspoon + whisper.cpp
 ```
-~800 lines of Python, vanilla JS and JSX. No server of its own: Übersicht already serves the folder at `http://127.0.0.1:41416/ai-radar/`.
+~1,200 lines of Python, vanilla JS and JSX (plus tests). No server of its own: Übersicht already serves the folder at `http://127.0.0.1:41416/ai-radar/`.
 
 ## Privacy
 - **No accounts, no telemetry.** Everything runs on your Mac.
