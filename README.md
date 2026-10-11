@@ -19,6 +19,11 @@ Most "AI news" tools are digests you have to remember to open. AI Radar lives on
 | **Free voice control** *(optional)* | Hold **⌥ Space** and talk. Transcription runs **locally** (whisper.cpp); simple commands are matched by local rules; only open-ended requests use an LLM (see [Privacy](#privacy)) |
 | **Responsive** | Everything scales with screen width and centers on big monitors; avoids the Dock |
 
+### The full page
+Click **all ↗** on any card to browse everything — search, sort, tabs, infinite scroll, equal-height cards.
+
+![The "See all" page: equal-height cards with search, tabs and sort](docs/see-all.png)
+
 ## Install
 Requirements: **macOS**, Python 3.9+, [Homebrew](https://brew.sh). Chrome is optional (used to open your app shortcuts).
 
