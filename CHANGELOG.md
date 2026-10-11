@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+- "See all" page: every card now has the same height (fixed image area, title, fading text, one-line tags, pinned footer) for a balanced grid
+- `radar doctor` no longer reports a running Übersicht as stopped
+
 ## 0.1.0 — first public release
 - Five lanes with carousel cards, local image cache, full "See all" page with search and infinite scroll
 - Prefs-driven ranking (boost/mute/min stars), per-lane source health, `radar doctor`
