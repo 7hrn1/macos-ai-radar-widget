@@ -1,0 +1,64 @@
+{
+  "chrome_profile": "Default",
+  "apps": [
+    {
+      "name": "Gmail",
+      "url": "https://mail.google.com/",
+      "icon": "mail.google.com",
+      "color": "#f87171",
+      "aliases": [
+        "gmail",
+        "mail",
+        "email",
+        "inbox"
+      ]
+    },
+    {
+      "name": "Calendar",
+      "url": "https://calendar.google.com/",
+      "icon": "calendar.google.com",
+      "color": "#34d399",
+      "aliases": [
+        "calendar",
+        "google calendar",
+        "gcal",
+        "schedule"
+      ]
+    },
+    {
+      "name": "Drive",
+      "url": "https://drive.google.com/",
+      "icon": "drive.google.com",
+      "color": "#fbbf24",
+      "aliases": [
+        "drive",
+        "google drive",
+        "files"
+      ]
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/",
+      "icon": "github.com",
+      "color": "#a78bfa",
+      "aliases": [
+        "github",
+        "git hub",
+        "repos"
+      ],
+      "icon_url": "https://github.githubassets.com/apple-touch-icon-180x180.png",
+      "plate": false
+    },
+    {
+      "name": "Hacker News",
+      "url": "https://news.ycombinator.com/",
+      "icon": "news.ycombinator.com",
+      "color": "#fb923c",
+      "aliases": [
+        "hacker news",
+        "hn",
+        "y combinator"
+      ]
+    }
+  ]
+}

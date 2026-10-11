@@ -1,0 +1,36 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  python:
+    strategy: { matrix: { os: [macos-latest, ubuntu-latest] } }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: python -m unittest discover -s tests -v
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell scripts
+        run: |
+          sudo apt-get install -y shellcheck >/dev/null
+          bash -n install.sh uninstall.sh widget/system.sh
+          shellcheck -S warning install.sh uninstall.sh
+      - name: Widget JSX parses
+        run: |
+          npm i --no-save esbuild >/dev/null
+          for f in widget/*.jsx; do npx esbuild "$f" --jsx=transform --log-level=error > /dev/null && echo "ok $f"; done
+      - name: No personal paths or secrets
+        run: "! grep -rIn -E '/Users/[a-z]+/|BEGIN (RSA|OPENSSH)|sk-ant-|ghp_[A-Za-z0-9]{20}' --exclude-dir=.git --exclude-dir=docs --exclude=ci.yml ."
+  installer:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install into a scratch folder (no network fetch)
+        run: |
+          ./install.sh --dest "$RUNNER_TEMP/widgets" --skip-deps --no-launch
+          T="$RUNNER_TEMP/widgets/ai-radar"
+          ! grep -n "__DIR__\|__PYTHON__\|__WIDGET__" "$T"/*.jsx "$T"/radar.html
+          python3 "$T/radar_cli.py" doctor || true

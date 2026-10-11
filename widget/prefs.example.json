@@ -1,0 +1,53 @@
+{
+  "refresh_minutes": 15,
+  "desk_items": 10,
+  "lanes": {
+    "labs": true,
+    "releases": true,
+    "launches": true,
+    "repos": true,
+    "creator": true
+  },
+  "boost": [
+    "agent",
+    "skills",
+    "mcp",
+    "claude",
+    "voice",
+    "video",
+    "image generation"
+  ],
+  "mute": [],
+  "min_stars": 150,
+  "repo_days": 14,
+  "releases_repos": [
+    "anthropics/claude-code",
+    "openai/codex",
+    "google-gemini/gemini-cli",
+    "ollama/ollama",
+    "langchain-ai/langchain",
+    "modelcontextprotocol/servers",
+    "vercel/ai",
+    "comfyanonymous/ComfyUI",
+    "huggingface/transformers",
+    "anthropics/anthropic-sdk-python",
+    "anthropics/skills",
+    "openai/openai-agents-python",
+    "microsoft/autogen",
+    "run-llama/llama_index",
+    "ggml-org/llama.cpp",
+    "huggingface/diffusers"
+  ],
+  "tickers": [
+    "NVDA",
+    "MSFT",
+    "GOOGL",
+    "META",
+    "AAPL",
+    "TSLA",
+    "SPY",
+    "BTC-USD"
+  ],
+  "extra_feeds": [],
+  "_comment": "Edit me, or just tell the radar: `radar ask \"mute crypto\"`. lab_feeds (optional) replaces the default lab/blog RSS list: [[\"Name\",\"https://…/feed.xml\"], …]. extra_feeds adds to it."
+}

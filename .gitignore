@@ -1,0 +1,13 @@
+# your own config + generated data — never commit these
+widget/prefs.json
+widget/apps.json
+widget/feed.json
+widget/feed.json.*
+widget/img/
+widget/icons/
+widget/*.lock
+*.log
+__pycache__/
+.DS_Store
+node_modules/
+/dist/

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Radar</title>
+<style>
+:root{--bg:#0b0e13;--card:#0f141b;--line:#2a303b;--mut:#8b95ab;--soft:#a8b3cf;--pur:#7c3aed;--pur2:#a78bfa;--txt:#f3f5f9}
+*{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,"SF Pro Display","Inter",sans-serif;-webkit-font-smoothing:antialiased}
+.top{position:sticky;top:0;z-index:5;background:rgba(11,14,19,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.wrap{max-width:1500px;margin:0 auto;padding:0 28px}
+.bar{display:flex;align-items:center;gap:18px;padding:16px 0 10px}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em} h1 em{font-style:normal;background:linear-gradient(90deg,#a78bfa,#f0abfc);-webkit-background-clip:text;color:transparent}
+.sub{font-size:12px;color:var(--mut)}#health{color:#fbbf24;font-weight:600} .sp{flex:1}
+input,select,button{font:inherit;color:var(--txt);background:#141922;border:1px solid var(--line);border-radius:12px;padding:9px 13px;outline:none}
+input{width:320px} input:focus,select:focus{border-color:var(--pur2)} button{cursor:pointer;font-weight:700} button:hover{border-color:#a8b3cf}
+.tabs{display:flex;gap:8px;padding:0 0 14px;flex-wrap:wrap}
+.tab{padding:8px 15px;border-radius:12px;border:1px solid var(--line);background:#111620;color:var(--soft);font-weight:700;font-size:13px;cursor:pointer}
+.tab b{color:var(--mut);font-weight:600;margin-left:6px}.tab.on{background:linear-gradient(135deg,#a78bfa,#7c3aed);border-color:transparent;color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.4)}.tab.on b{color:#e9ddff}
+.grid{columns:4 300px;column-gap:16px;padding:22px 0 80px}
+.card{break-inside:avoid;display:block;margin:0 0 16px;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.card:hover{border-color:#a8b3cf;transform:translateY(-2px)}
+.im{height:150px;background:#1a1f29 center/cover no-repeat;border-bottom:1px solid var(--line)}.im.ph{background:linear-gradient(135deg,#2a2160,#17304a);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;color:rgba(255,255,255,.3)}
+.p{padding:14px 16px 12px}.m{display:flex;gap:7px;align-items:center;font-size:11.5px;color:var(--mut);font-weight:600}.m b{color:var(--pur2)}
+.new{background:#ff5c39;color:#fff;border-radius:7px;padding:2px 7px;font-size:10px;font-weight:800}
+.t{font-size:17px;font-weight:800;line-height:1.22;letter-spacing:-.01em;margin:8px 0 6px;word-break:break-word}.card:hover .t{color:var(--pur2)}
+.b{font-size:13px;line-height:1.45;color:var(--soft);display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+ul{margin:8px 0 0;padding:0;list-style:none}li{font-size:12.5px;color:var(--soft);padding-left:14px;position:relative;margin:5px 0;line-height:1.4}li:before{content:'';position:absolute;left:1px;top:6px;width:6px;height:6px;border-radius:50%;background:var(--pur2)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.tag{font-size:10.5px;font-weight:700;color:var(--soft);background:#1a1f29;border:1px solid var(--line);padding:2px 8px;border-radius:8px}
+.ft{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;font-weight:700;color:#fbbf24}.ft span{margin-right:12px}.ft .r{color:var(--mut);font-weight:600;margin:0}
+.sv{cursor:pointer;opacity:.6;padding:2px 6px;border-radius:8px}.sv:hover,.sv.on{opacity:1;background:#2a303b}
+.empty,.more{color:var(--mut);text-align:center;padding:60px 0}.score{font-size:10px;color:#556;margin-left:auto}
+</style></head><body>
+<div class="top"><div class="wrap">
+  <div class="bar"><h1>AI <em>Radar</em></h1><div class="sub" id="sub">loading…</div><div class="sub" id="health" style="cursor:help"></div><div class="sp"></div>
+    <input id="q" placeholder="Search everything…  ( / )"><select id="sort"><option value="score">Best match</option><option value="new">Newest</option></select>
+    <button id="copy" title="Copy your 🔖 saved list">🔖 <span id="nsaved">0</span></button><button id="rf">↻</button></div>
+  <div class="tabs" id="tabs"></div></div></div>
+<div class="wrap"><div class="grid" id="grid"></div><div class="more" id="more"></div></div>
+<script>
+const LANES={all:'All',labs:'Labs & builders',releases:'Releases',launches:'Launches',repos:'Agents & skills',creator:'Creator'};
+let DATA=null,lane=new URLSearchParams(location.search).get('lane')||'all',q=new URLSearchParams(location.search).get('q')||'',sort='score',shown=0,list=[];
+const saved=new Set(JSON.parse(localStorage.getItem('radar_saved')||'[]'));
+const safe=u=>{try{const x=new URL(u);return x.protocol==='http:'||x.protocol==='https:'?x.href:'#'}catch(e){return'#'}};
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ago=iso=>{if(!iso)return'';const h=Math.max(0,Math.round((Date.now()-new Date(iso))/36e5));return h<1?'just now':h<24?h+'h ago':Math.round(h/24)+'d ago'};
+async function load(){const r=await fetch('feed.json?'+Date.now());DATA=await r.json();
+  $('#sub').textContent=Object.values(DATA.counts).reduce((a,b)=>a+b,0)+' items · updated '+new Date(DATA.updated).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});health();render()}
+function health(){const H=DATA.health||{},l=H.lanes||{},bad=Object.entries(l).filter(([k,v])=>v.error||v.n===0),hosts=Object.entries(H.failing_hosts||{});
+  const el=$('#health');if(!bad.length){el.textContent='';return}
+  el.textContent='⚠ '+bad.length+' source'+(bad.length>1?'s':'')+' need attention';
+  el.title=[...bad.map(([k,v])=>k+': '+(v.error||'empty')),...hosts.map(([h,v])=>'(info) '+h+': '+v.fail+' failed ('+v.error+')'),(H.github_token===false?'No GitHub token: anonymous limit is 60 requests/hour (gh auth login)':'')].filter(Boolean).join('\n')}
+function tabs(){const c=DATA.counts,tot=Object.values(c).reduce((a,b)=>a+b,0);
+  $('#tabs').innerHTML=Object.entries(LANES).map(([k,v])=>`<div class="tab ${k===lane?'on':''}" data-k="${k}">${v}<b>${k==='all'?tot:(c[k]||0)}</b></div>`).join('');
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{lane=t.dataset.k;history.replaceState(null,'','?lane='+lane);render()})}
+function render(){tabs();let items=[];for(const[k,v] of Object.entries(DATA.lanes))if(lane==='all'||lane===k)v.forEach(i=>items.push({...i,_lane:k}));
+  const s=q.toLowerCase();if(s)items=items.filter(i=>(i.t+' '+(i.b||'')+' '+(i.c||[]).join(' ')+' '+i.s).toLowerCase().includes(s));
+  items.sort(sort==='new'?(a,b)=>(b.d||'').localeCompare(a.d||''):(a,b)=>b.score-a.score);list=items;shown=0;$('#grid').innerHTML='';more();$('#nsaved').textContent=saved.size}
+function card(i){const img=i.img?`<div class="im" style="background-image:url(${i.img})"></div>`:`<div class="im ph">${esc((i.s||'?')[0])}</div>`;
+  const body=i.notes&&i.notes.length?`<ul>${i.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:`<div class="b">${esc(i.b)}</div>`;
+  return`<a class="card" href="${esc(safe(i.u))}" target="_blank" rel="noopener">${img}<div class="p"><div class="m"><b>${esc(i.s)}</b>${i.d?'<span>· '+ago(i.d)+'</span>':''}<span class="score">${i.score}</span></div>
+  <div class="t">${esc(i.t)}</div>${body}<div class="tags">${(i.c||[]).map(c=>`<span class="tag">${esc(c)}</span>`).join('')}</div>
+  <div class="ft"><div>${(i.st||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div><span class="sv ${saved.has(i.id)?'on':''}" data-id="${i.id}" data-t="${esc(i.t)}" data-u="${esc(safe(i.u))}">🔖</span></div></div></a>`}
+function more(){const n=list.slice(shown,shown+24);$('#grid').insertAdjacentHTML('beforeend',n.map(card).join(''));shown+=n.length;
+  $('#more').textContent=list.length===0?'Nothing matches — try another search or tab.':shown<list.length?'Scroll for more…':'— '+list.length+' items —';
+  document.querySelectorAll('.sv').forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();const id=b.dataset.id;saved.has(id)?saved.delete(id):saved.add(id);
+    localStorage.setItem('radar_saved',JSON.stringify([...saved]));localStorage.setItem('radar_saved_meta',JSON.stringify({...JSON.parse(localStorage.getItem('radar_saved_meta')||'{}'),[id]:{t:b.dataset.t,u:b.dataset.u}}));b.classList.toggle('on');$('#nsaved').textContent=saved.size})}
+new IntersectionObserver(e=>{if(e[0].isIntersecting&&DATA&&shown<list.length)more()},{rootMargin:'600px'}).observe($('#more'));
+$('#q').oninput=e=>{q=e.target.value;render()};$('#sort').onchange=e=>{sort=e.target.value;render()};$('#rf').onclick=load;
+$('#copy').onclick=()=>{const m=JSON.parse(localStorage.getItem('radar_saved_meta')||'{}');navigator.clipboard.writeText([...saved].map(id=>m[id]?`- [ ] ${m[id].t} — ${m[id].u}`:'').filter(Boolean).join('\n'));$('#copy').textContent='✓ copied'};
+addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();$('#q').focus()}});
+$('#q').value=q;load();setInterval(load,5*60*1000);
+</script></body></html>
