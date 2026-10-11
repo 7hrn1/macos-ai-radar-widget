@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+- Voice: an on-screen panel now shows every stage (listening → transcribing → what it heard → working → the reply and what changed) instead of vanishing after 3 s; replies are also spoken. New pref `voice_feedback`: both | text | speech
+- Fix: speech-to-text adds a final “.”/“?”, which made most spoken commands miss the instant local rules and go to the slower LLM path — punctuation is now ignored
+- Fix: LLM-routed requests now open the matching lane (agents → Agents, video tools → Creator)
+- `claude -p` is started with stdin closed (no 3 s stall when launched from Hammerspoon)
+
 ## 0.1.3
 - Shortcut icons: smoother, cleaner hover — lift + a thin app-tinted ring and soft shadow (animated with box-shadow/transform only; the stacked glow filters flashed and re-rendered every frame)
 

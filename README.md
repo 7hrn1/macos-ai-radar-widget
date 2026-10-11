@@ -41,7 +41,7 @@ Then run `radar doctor` to check everything. Uninstall with `./uninstall.sh` (yo
 ## Use it
 **On the desktop** — hover a card to pause, click to open the item, click 🔖 to save it to `~/Documents/ai-radar-saved.md`, click **all ↗** for the full page.
 
-**By text or voice** — `radar ask "…"` or hold ⌥ Space:
+**By text or voice** — `radar ask "…"` or hold ⌥ Space. A small panel above the Dock follows every step — *Listening → Transcribing → what it heard → Working → ✓ the reply* (plus what changed) — and the reply is spoken too. Click the panel to dismiss it. Set `voice_feedback` in `prefs.json` to change that.
 
 | Say | Does |
 |---|---|
@@ -69,6 +69,7 @@ Everything lives in `~/Library/Application Support/Übersicht/widgets/ai-radar/`
 | `tickers` | markets strip symbols |
 | `lab_feeds` / `extra_feeds` | replace / add RSS feeds for the Labs lane: `[["Name", "https://…/feed.xml"]]` |
 | `refresh_minutes` | how often the engine refetches (default 15) |
+| `voice_feedback` | how replies reach you: `"both"` (on-screen text + spoken, default), `"text"` (on-screen only), `"speech"` (spoken only) |
 
 **`apps.json`** — your shortcuts: `name`, `url`, `icon` (a domain; the icon is downloaded for you), optional `icon_url`, `plate: false` (for icons that are already rounded squares), `aliases` (what you can say), `color`. Set `chrome_profile` (e.g. `"Profile 1"`) to open links in a specific Chrome profile — find yours at `chrome://version`.
 

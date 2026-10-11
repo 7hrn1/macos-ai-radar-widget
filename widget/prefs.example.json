@@ -49,5 +49,6 @@
     "BTC-USD"
   ],
   "extra_feeds": [],
-  "_comment": "Edit me, or just tell the radar: `radar ask \"mute crypto\"`. lab_feeds (optional) replaces the default lab/blog RSS list: [[\"Name\",\"https://…/feed.xml\"], …]. extra_feeds adds to it."
+  "_comment": "Edit me, or just tell the radar: `radar ask \"mute crypto\"`. lab_feeds (optional) replaces the default lab/blog RSS list: [[\"Name\",\"https://…/feed.xml\"], …]. extra_feeds adds to it.",
+  "voice_feedback": "both"
 }

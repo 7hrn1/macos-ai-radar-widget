@@ -21,6 +21,13 @@ class Rules(unittest.TestCase):
         self.assertEqual(cli.rules('at least 2k stars')[0], {'min_stars': 2000})
         self.assertEqual(cli.rules('show 12 items')[0], {'desk_items': 12})
 
+    def test_whisper_punctuation_is_ignored(self):
+        # speech-to-text appends '.', '?', '!' — these must still match the instant local rules
+        for said, key in (('Show me the labs.', 1), ('Mute crypto.', 0), ('Open Gmail.', 5), ('Refresh!', 3), ("What's new in agents?", 3), ('Boost voice cloning, please.', 0)):
+            self.assertIsNotNone(cli.rules(said), said)
+        self.assertEqual(cli.rules('Mute crypto.')[0], {'mute_add': ['crypto']})
+        self.assertEqual(cli.rules('Boost voice cloning, please.')[0], {'boost_add': ['voice cloning']})
+
     def test_polite_and_wake_prefixes(self):
         self.assertEqual(cli.rules('hey radar, please mute nft')[0], {'mute_add': ['nft']})
 
@@ -67,6 +74,37 @@ class Ask(unittest.TestCase):
     def test_blank_and_noise_ignored(self):
         with mock.patch.object(cli, 'llm', side_effect=AssertionError):
             for t in ('', '  ', '[BLANK_AUDIO]', '(silence)'): cli.ask(t)
+
+
+class Feedback(unittest.TestCase):
+    CLI = os.path.join(os.path.dirname(__file__), '..', 'widget', 'radar_cli.py')
+
+    def run_cli(self, *args):
+        env = {**os.environ, 'HOME': tempfile.mkdtemp(), 'RADAR_NO_SAY': '1', 'RADAR_NO_OPEN': '1', 'RADAR_NO_REFRESH': '1'}
+        import subprocess
+        return subprocess.run([sys.executable, self.CLI, *args], env=env, capture_output=True, text=True, timeout=30).stdout
+
+    def test_ui_mode_emits_machine_readable_reply(self):
+        out = self.run_cli('--ui', 'ask', 'show me the labs.')
+        self.assertIn('@reply\tOpening labs.\topened the full page · labs', out)
+
+    def test_plain_mode_prints_text_only(self):
+        out = self.run_cli('ask', 'show me the labs')
+        self.assertEqual(out.strip(), 'Opening labs.')
+
+    def test_text_mode_never_speaks(self):
+        with mock.patch.object(cli, 'load', return_value={'voice_feedback': 'text'}), mock.patch.object(cli.subprocess, 'Popen') as pop, \
+             mock.patch.dict(os.environ, {'RADAR_NO_SAY': ''}):
+            cli.say('hello'); pop.assert_not_called()
+
+    def test_speech_mode_speaks(self):
+        with mock.patch.object(cli, 'load', return_value={'voice_feedback': 'speech'}), mock.patch.object(cli.subprocess, 'Popen') as pop, \
+             mock.patch.dict(os.environ, {'RADAR_NO_SAY': ''}):
+            cli.say('hello'); self.assertEqual(pop.call_args[0][0][0], 'say')
+
+    def test_unknown_mode_falls_back_to_both(self):
+        with mock.patch.object(cli, 'load', return_value={'voice_feedback': 'banana'}):
+            self.assertEqual(cli.feedback_mode(), 'both')
 
 
 if __name__ == '__main__':

@@ -27,9 +27,22 @@ def load():
 def save(p):
     with open(PREFS + '.tmp', 'w') as f: json.dump(p, f, indent=2, ensure_ascii=False)
     os.replace(PREFS + '.tmp', PREFS)
-def say(t):
-    log('SAY', t); print(t)
-    if not os.environ.get('RADAR_NO_SAY'): subprocess.Popen(['say', '-r', '195', '--', t], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+UI = '--ui' in sys.argv                       # set by the Hammerspoon HUD: machine-readable "@stage<TAB>text" lines on stdout
+if UI: sys.argv.remove('--ui')
+def ui(stage, text='', extra=''):
+    """Status line for the on-screen HUD (only in --ui mode)."""
+    if UI: print('@' + stage + '\t' + re.sub(r'[\t\r\n]+', ' ', str(text)) + (('\t' + re.sub(r'[\t\r\n]+', ' ', str(extra))) if extra else ''), flush=True)
+def feedback_mode():
+    m = str(load().get('voice_feedback', 'both')).lower()      # both | text | speech
+    return m if m in ('both', 'text', 'speech') else 'both'
+def say(t, extra='', error=False):
+    """Reply to the user: always logged; shown on screen (HUD) and/or spoken, per prefs.voice_feedback."""
+    log('SAY', t)
+    mode = feedback_mode()
+    if UI: ui('error' if error else ('done' if mode == 'speech' else 'reply'), t, extra)       # 'speech' = no on-screen text: just clear the HUD
+    else: print(t)
+    if mode in ('both', 'speech') and not os.environ.get('RADAR_NO_SAY'):
+        subprocess.Popen(['say', '-r', '195', '--', t], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 def sound(n):
     if not os.environ.get('RADAR_NO_SAY'): subprocess.Popen(['afplay', f'/System/Library/Sounds/{n}.aiff'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 def open_url(u):
@@ -99,7 +112,9 @@ def brief(lane=None, n=3):
 
 def rules(t):
     """-> (patch, open_lane, query, say) or None"""
-    s = re.sub(r'[^\w\s\'./+-]', ' ', t.lower()).strip(); s = re.sub(r'^(hey )?(radar|jarvis)[, ]*', '', s); s = re.sub(r'^(please|can you|could you|would you)\s+', '', s)
+    s = re.sub(r'[\s.!?,;:]+$', '', t.lower().strip())          # speech-to-text ends sentences with '.', '?' etc.
+    s = re.sub(r'[^\w\s\'./+-]', ' ', s).strip(); s = re.sub(r'\s+', ' ', s)
+    s = re.sub(r'^(hey |ok |okay )?(radar|jarvis)[, ]*', '', s); s = re.sub(r'^(please|can you|could you|would you)\s+', '', s); s = re.sub(r'\s+please$', '', s)
     if re.fullmatch(r'(refresh|reload|update)( the)?( radar| feed| everything)?( now)?', s): return ({}, None, None, 'Refreshing the radar now.', True)
     m = re.fullmatch(r'(open|launch|go to|take me to|pull up|show me|bring up|start)( up)?( my| the)?\s+(.+?)( app| tab| page| website)?', s)
     if m and find_app(m.group(4)): return ({}, None, None, 'Opening ' + find_app(m.group(4))[0]['name'] + '.', False, find_app(m.group(4)))
@@ -139,11 +154,11 @@ def llm(text, p):
     L = feed().get('lanes', {}); titles = '\n'.join(f"- [{k}] {i['t'][:90]}" for k, v in L.items() for i in v[:6])
     prompt = ("You are the voice controller for a personal AI-news desktop dashboard. The user's spoken request was transcribed (it may contain mishearings). "
               "Turn it into: a `patch` to their preferences (only fields that must change), optionally `open_lane`/`query` to open the full browse page, and `say` = one short spoken sentence (<=22 words) confirming what you did or answering a question using the headlines below. "
-              "boost_* = topics to rank higher, mute_* = topics to hide. If the request is unclear or unrelated, change nothing and say you didn't catch it.\n\n"
+              "boost_* = topics to rank higher, mute_* = topics to hide. open_lane must match the topic: agents/skills/MCP/GitHub repos -> repos; model or company news/blogs -> labs; version updates -> releases; new products -> launches; image/video/voice/music models -> creator. If the request is unclear or unrelated, change nothing and say you didn't catch it.\n\n"
               f"Current prefs: {json.dumps({k: p.get(k) for k in ('boost', 'mute', 'min_stars', 'desk_items', 'repo_days', 'lanes')})}\nCurrent top headlines:\n{titles}\n\nRequest: {text}")
     cmd = ['claude', '-p', prompt, '--model', 'claude-haiku-4-5', '--tools', '', '--no-session-persistence', '--disable-slash-commands', '--setting-sources', '',
            '--output-format', 'json', '--json-schema', json.dumps(SCHEMA)]
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=90, cwd=TMP); log('LLM rc', r.returncode, r.stderr[:200])
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=90, cwd=TMP, stdin=subprocess.DEVNULL); log('LLM rc', r.returncode, r.stderr[:300].replace('\n', ' '))
     out = json.loads(r.stdout)
     res = out.get('structured_output') or out.get('result')
     if isinstance(res, str): res = json.loads(res)
@@ -154,17 +169,21 @@ def ask(text):
     if not text or re.fullmatch(r'[\[\(].*[\]\)]', text) or len(text) < 3: return
     p = load(); r = rules(text)
     if r is None:
+        ui('working', 'Asking Claude…')
         try: o = llm(text, p)
-        except Exception as e: log('LLM FAIL', repr(e)); say("Sorry, I couldn't reach Claude for that one."); return
+        except Exception as e: log('LLM FAIL', repr(e)); say("Sorry, I couldn't reach Claude for that one.", error=True); return
         patch, lane, q, msg, needs = o.get('patch') or {}, o.get('open_lane'), o.get('query'), o.get('say') or 'Done.', None
     else:
         patch, lane, q, msg, needs = r[0], r[1], r[2], r[3], r[4]
-        if len(r) > 5: open_app(*r[5]); say(msg); return
+        if len(r) > 5: open_app(*r[5]); say(msg, 'opened in your browser'); return
     changed = apply_patch(p, patch) if patch else []
     if changed: save(p); log('PATCH', changed)
     if changed or needs is True: refresh_bg()
-    if lane is not None and (lane or q or True) and (r is None and (lane or q) or r is not None and lane is not None): open_url(page(lane or '', q or ''))
-    say(msg)
+    opened = ''
+    if lane is not None and (lane or q or True) and (r is None and (lane or q) or r is not None and lane is not None):
+        open_url(page(lane or '', q or '')); opened = 'opened the full page' + (f' · {lane}' if lane else '') + (f' · “{q}”' if q else '')
+    note = ' · '.join(x for x in ((', '.join(changed)) if changed else '', opened) if x)
+    say(msg, note)
 
 def voice(action):
     if action == 'start':
@@ -178,11 +197,14 @@ def voice(action):
         except Exception: return
         try: os.kill(pid, signal.SIGINT)
         except Exception: pass
-        time.sleep(0.35); sound('Pop')
+        time.sleep(0.35); sound('Pop'); ui('transcribing', 'Transcribing…')
         r = subprocess.run(['whisper-cli', '-m', MODEL, '-f', WAV, '-nt', '-np', '-t', '4', '-l', 'en'], capture_output=True, text=True, timeout=60)
         try: os.remove(WAV)                          # the recording is deleted as soon as it's transcribed
         except OSError: pass
-        text = re.sub(r'\s+', ' ', r.stdout).strip(); log('HEARD', repr(text)); print('heard:', text)
+        text = re.sub(r'\s+', ' ', r.stdout).strip(); log('HEARD', repr(text))
+        if not UI: print('heard:', text)
+        if not text or re.fullmatch(r'[\[\(].*[\]\)]', text): say("I didn't catch that — hold ⌥ Space and try again.", error=True); return
+        ui('heard', text)
         ask(text)
 
 def doctor():
